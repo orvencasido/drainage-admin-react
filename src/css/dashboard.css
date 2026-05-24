@@ -2,9 +2,9 @@
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
 }
 
 .dashboard-layout {
@@ -34,7 +34,7 @@
   align-items: center;
   text-align: center;
   justify-content: center;
-  padding: 30px 20px;
+  padding: 18px 16px;
   transition: transform 0.2s ease;
 }
 
@@ -43,14 +43,16 @@
 }
 
 .stat-title {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
 }
 
 .stat-value {
-  font-size: 54px;
+  font-size: 36px;
   font-weight: 800;
   line-height: 1;
 }
