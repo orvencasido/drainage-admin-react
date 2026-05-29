@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import { Search, X, Edit, ChevronLeft } from 'lucide-react';
 import cloggedDrainImg from '../assets/clogged_drain.png';
 import '../css/reports.css';
 
 export default function Reports() {
-  const { reports, updateReportDetails } = useApp();
+  const { reports, loading, error, updateReportDetails } = useApp();
   const [searchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
   const [searchQuery, setSearchQuery] = useState(initialSearch);
@@ -25,14 +25,19 @@ export default function Reports() {
     setStatusVal(report.status);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!statusVal) {
       alert('Please select a status.');
       return;
     }
-    updateReportDetails(editingReport.id, statusVal, remarks);
-    setEditingReport(null);
+
+    try {
+      await updateReportDetails(editingReport.id, statusVal, remarks);
+      setEditingReport(null);
+    } catch (saveError) {
+      alert(saveError.message || 'Unable to update report.');
+    }
   };
 
   // Filter reports by tab and search query
@@ -41,13 +46,25 @@ export default function Reports() {
     const matchesSearch = 
       report.issue.toLowerCase().includes(searchQuery.toLowerCase()) ||
       report.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.id.toLowerCase().includes(searchQuery.toLowerCase());
+      report.displayId.toLowerCase().includes(searchQuery.toLowerCase());
     
     return matchesTab && matchesSearch;
   });
 
   return (
     <div>
+      {loading && (
+        <div className="card" style={{ padding: '30px', marginBottom: '20px', color: '#64748b' }}>
+          Loading reports...
+        </div>
+      )}
+
+      {error && (
+        <div className="card" style={{ padding: '16px 20px', marginBottom: '20px', color: '#b91c1c' }}>
+          {error}
+        </div>
+      )}
+
       {/* Filter Tabs + Search on the same row */}
       <div className="controls-row" style={{ marginBottom: '24px' }}>
         <div className="filter-tabs">
@@ -98,7 +115,7 @@ export default function Reports() {
               {filteredReports.length > 0 ? (
                 filteredReports.map((report) => (
                   <tr key={report.id}>
-                    <td>{report.id}</td>
+                    <td>{report.displayId}</td>
                     <td>{report.issue}</td>
                     <td>{report.location}</td>
                     <td>
@@ -149,7 +166,7 @@ export default function Reports() {
               <div>
                 <div className="report-detail-row">
                   <span className="report-detail-label">Report ID</span>
-                  <span className="report-detail-value">{editingReport.id}</span>
+                  <span className="report-detail-value">{editingReport.displayId}</span>
                 </div>
                 <div className="report-detail-row">
                   <span className="report-detail-label">Location</span>

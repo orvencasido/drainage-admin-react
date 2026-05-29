@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
+import { useState } from 'react';
+import { useApp } from '../context/useApp';
 import { Search, Trash2, UserPlus, X } from 'lucide-react';
 import '../css/residents.css';
 
@@ -20,20 +20,23 @@ export default function Residents() {
   const [email, setEmail] = useState('');
 
   // Handle Add Resident Form Submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !contact.trim() || !email.trim()) {
       alert('Please fill out all fields.');
       return;
     }
 
-    addResident({ name, contact, email });
-    
-    // Clear form and close modal
-    setName('');
-    setContact('');
-    setEmail('');
-    setIsModalOpen(false);
+    try {
+      await addResident({ name, contact, email });
+
+      setName('');
+      setContact('');
+      setEmail('');
+      setIsModalOpen(false);
+    } catch (saveError) {
+      alert(saveError.message || 'Unable to save resident.');
+    }
   };
 
   // Filter residents
@@ -101,7 +104,13 @@ export default function Residents() {
                       <button
                         title="Click to toggle status"
                         className={`status-toggle-btn ${res.status.toLowerCase()}`}
-                        onClick={() => toggleResidentStatus(res.id)}
+                        onClick={async () => {
+                          try {
+                            await toggleResidentStatus(res.id);
+                          } catch (statusError) {
+                            alert(statusError.message || 'Unable to update resident status.');
+                          }
+                        }}
                       >
                         {res.status}
                       </button>
@@ -111,7 +120,9 @@ export default function Residents() {
                         className="btn-delete"
                         onClick={() => {
                           if (confirm(`Are you sure you want to delete ${res.name}?`)) {
-                            deleteResident(res.id);
+                            deleteResident(res.id).catch((deleteError) => {
+                              alert(deleteError.message || 'Unable to delete resident.');
+                            });
                           }
                         }}
                       >

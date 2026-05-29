@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/useApp';
 import '../css/login.css';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 
@@ -8,19 +9,28 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { signIn } = useApp();
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     if (!username.trim() || !password.trim()) {
       setError('Please fill in all fields.');
       return;
     }
-    
-    // In a real application, you'd check credentials here.
-    // For the mockup frontend, any login works.
+
+    setIsSubmitting(true);
     setError('');
-    navigate('/dashboard');
+
+    try {
+      await signIn(username.trim(), password);
+      navigate('/dashboard');
+    } catch (loginError) {
+      setError(loginError.message || 'Unable to login.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -44,7 +54,7 @@ export default function Login() {
             </span>
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Email"
               className="input-field"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -78,7 +88,7 @@ export default function Login() {
           </div>
 
           <button type="submit" className="login-btn">
-            LOGIN
+            {isSubmitting ? 'LOGGING IN...' : 'LOGIN'}
           </button>
         </form>
       </div>

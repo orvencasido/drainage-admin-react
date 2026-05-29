@@ -1,11 +1,10 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import { ChevronRight } from 'lucide-react';
 import '../css/dashboard.css';
 
 export default function Dashboard() {
-  const { reports } = useApp();
+  const { reports, loading, error } = useApp();
 
   // Calculate statistics dynamically
   const totalReports = reports.length;
@@ -28,8 +27,18 @@ export default function Dashboard() {
   // Limit recent reports table to latest 4 reports
   const recentReports = reports.slice(0, 4);
 
+  if (loading) {
+    return <div className="card" style={{ padding: '30px', color: '#64748b' }}>Loading dashboard data...</div>;
+  }
+
   return (
     <div>
+      {error && (
+        <div className="card" style={{ padding: '16px 20px', marginBottom: '20px', color: '#b91c1c' }}>
+          {error}
+        </div>
+      )}
+
       {/* Stats Grid */}
       <div className="stats-grid">
         <div className="card stat-card total">
@@ -76,7 +85,7 @@ export default function Dashboard() {
                 {recentReports.length > 0 ? (
                   recentReports.map((report) => (
                     <tr key={report.id}>
-                      <td>{report.id}</td>
+                      <td>{report.displayId}</td>
                       <td>{report.issue}</td>
                       <td>{report.location}</td>
                       <td>

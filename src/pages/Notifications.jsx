@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useApp } from '../context/AppContext';
+import { useState } from 'react';
+import { useApp } from '../context/useApp';
 import { Search, X, Send } from 'lucide-react';
 import '../css/notifications.css';
 
 export default function Notifications() {
-  const { residents } = useApp();
+  const { residents, sendNotification } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedResidents, setSelectedResidents] = useState([]);
   const [message, setMessage] = useState('');
@@ -41,7 +41,7 @@ export default function Notifications() {
     setShowSuggestions(false);
   };
 
-  const handleSend = (e) => {
+  const handleSend = async (e) => {
     e.preventDefault();
     if (selectedResidents.length === 0) {
       alert('Please select at least one resident to receive the notification.');
@@ -52,12 +52,14 @@ export default function Notifications() {
       return;
     }
 
-    // Mock send notification
-    const recipientNames = selectedResidents.map(r => r.name).join(', ');
-    alert(`Notification successfully sent to:\n${recipientNames}\n\nMessage: "${message}"`);
-    
-    // Clear form
-    handleCancel();
+    try {
+      await sendNotification(selectedResidents.map((resident) => resident.id), message.trim());
+      const recipientNames = selectedResidents.map(r => r.name).join(', ');
+      alert(`Notification saved for:\n${recipientNames}`);
+      handleCancel();
+    } catch (sendError) {
+      alert(sendError.message || 'Unable to send notification.');
+    }
   };
 
   return (

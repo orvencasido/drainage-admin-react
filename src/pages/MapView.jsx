@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../context/useApp';
 import { MapPin as PinIcon } from 'lucide-react';
 import mapBackground from '../assets/map_background.png';
 import '../css/map.css';
@@ -74,7 +74,7 @@ export default function MapView() {
           ))}
 
           {/* Interactive Report Pins */}
-          {reports.map((report) => (
+          {reports.filter((report) => report.mapCoords).map((report) => (
             <div
               key={report.id}
               className="map-pin"
@@ -112,7 +112,7 @@ export default function MapView() {
 
                   <button 
                     className="map-popup-link"
-                    onClick={() => navigate(`/reports?search=${report.id}`)}
+                    onClick={() => navigate(`/reports?search=${report.displayId}`)}
                   >
                     View details
                   </button>

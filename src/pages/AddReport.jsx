@@ -1,12 +1,11 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
-import { Upload, MapPin, X, PlusCircle } from 'lucide-react';
-import mapBackground from '../assets/map_background.png';
+import { useApp } from '../context/useApp';
+import { Upload, X, PlusCircle } from 'lucide-react';
 import '../css/add_report.css';
 
 export default function AddReport() {
-  const { setReports } = useApp();
+  const { addReport } = useApp();
   const navigate = useNavigate();
   
   const [issue, setIssue] = useState('Clogged Drain');
@@ -14,8 +13,9 @@ export default function AddReport() {
   const [description, setDescription] = useState('');
   const [submittedBy, setSubmittedBy] = useState('');
   const [contactNo, setContactNo] = useState('');
-  const [mapCoords, setMapCoords] = useState(null); // { x, y }
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fileInputRef = useRef(null);
 
@@ -24,6 +24,7 @@ export default function AddReport() {
     if (file) {
       const url = URL.createObjectURL(file);
       setImagePreview(url);
+      setImageFile(file);
     }
   };
 
@@ -34,23 +35,17 @@ export default function AddReport() {
   const handleRemoveImage = (e) => {
     e.stopPropagation();
     setImagePreview(null);
+    setImageFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  };
-
-  const handleMapClick = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMapCoords({ x: Math.round(x), y: Math.round(y) });
   };
 
   const handleCancel = () => {
     navigate('/reports');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!locationText.trim()) {
       alert('Please enter a location name.');
@@ -60,38 +55,26 @@ export default function AddReport() {
       alert('Please describe the issue.');
       return;
     }
-    if (!mapCoords) {
-      alert('Please click on the satellite map below to select the exact coordinates.');
-      return;
+
+    setIsSubmitting(true);
+
+    try {
+      const savedReport = await addReport({
+        issue,
+        location: locationText.trim(),
+        submittedBy: submittedBy.trim() || 'Admin',
+        contactNo: contactNo.trim(),
+        description: description.trim(),
+        latLngLabel: locationText.trim()
+      }, imageFile);
+
+      alert(`Report ${savedReport.displayId} added successfully!`);
+      navigate('/reports');
+    } catch (submitError) {
+      alert(submitError.message || 'Unable to submit report.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Generate next report ID
-    const newReportId = `#${Math.floor(26 + Math.random() * 100)}`;
-    const newReport = {
-      id: newReportId,
-      issue,
-      location: locationText,
-      status: 'In Progress',
-      dateSubmitted: new Date().toLocaleString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      submittedBy: submittedBy.trim() || 'Admin',
-      contactNo: contactNo.trim() || 'N/A',
-      description,
-      remarks: '',
-      mapCoords,
-      latLngLabel: locationText,
-      imageUrl: imagePreview
-    };
-
-    setReports(prev => [newReport, ...prev]);
-    alert(`Report ${newReportId} added successfully!`);
-    navigate('/reports');
   };
 
   return (
@@ -165,7 +148,7 @@ export default function AddReport() {
             </div>
           </div>
 
-          {/* Right Column - Media and Map Coordinates */}
+          {/* Right Column - Media Upload */}
           <div>
             <div className="form-section-title">
               <Upload size={20} color="var(--primary)" />
@@ -208,42 +191,6 @@ export default function AddReport() {
               )}
             </div>
 
-            <div className="form-section-title" style={{ marginTop: '24px' }}>
-              <MapPin size={20} color="var(--primary)" />
-              <span>Select Exact Location</span>
-            </div>
-
-            <div className="mini-map-container" onClick={handleMapClick}>
-              <div className="mini-map-label-overlay">Satellite Map View</div>
-              <img
-                src={mapBackground}
-                alt="Mini Map Guide"
-                className="mini-map-bg"
-              />
-
-              {mapCoords && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: `${mapCoords.x}%`,
-                    top: `${mapCoords.y}%`,
-                    transform: 'translate(-50%, -100%)',
-                    color: '#ef4444',
-                    pointerEvents: 'none',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center'
-                  }}
-                >
-                  <MapPin size={28} fill="#ef4444" fillOpacity={0.2} />
-                </div>
-              )}
-            </div>
-            <div className="mini-map-instructions">
-              {mapCoords 
-                ? `Pinned coordinates: X: ${mapCoords.x}%, Y: ${mapCoords.y}%`
-                : 'Click anywhere on the satellite image above to pin the exact coordinate.'}
-            </div>
           </div>
         </div>
       </form>
@@ -261,8 +208,9 @@ export default function AddReport() {
           type="submit"
           className="btn-send-notif"
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          Submit Report
+          {isSubmitting ? 'Submitting...' : 'Submit Report'}
         </button>
       </div>
     </div>

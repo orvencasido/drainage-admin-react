@@ -1,9 +1,10 @@
-import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { User } from 'lucide-react';
+import { useApp } from '../context/useApp';
 
 export default function Header() {
   const location = useLocation();
+  const { session } = useApp();
 
   const getTitle = (path) => {
     switch (path) {
@@ -42,7 +43,9 @@ export default function Header() {
         }}>
           <User size={18} />
         </div>
-        <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569' }}>Admin</span>
+        <span style={{ fontSize: '14px', fontWeight: '600', color: '#475569' }}>
+          {session?.user?.email || 'Admin'}
+        </span>
       </div>
     </header>
   );
