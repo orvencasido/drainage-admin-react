@@ -11,6 +11,8 @@ export default function Header() {
         return 'Dashboard';
       case '/reports':
         return 'All Reports';
+      case '/add-report':
+        return 'Add Drainage Report';
       case '/map':
         return 'Reports Map View';
       case '/residents':

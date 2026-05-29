@@ -8,6 +8,7 @@ import Reports from './pages/Reports';
 import MapView from './pages/MapView';
 import Residents from './pages/Residents';
 import Notifications from './pages/Notifications';
+import AddReport from './pages/AddReport';
 import './App.css';
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/map" element={<MapView />} />
             <Route path="/residents" element={<Residents />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/add-report" element={<AddReport />} />
           </Route>
           
           {/* Catch-all redirect to Login */}

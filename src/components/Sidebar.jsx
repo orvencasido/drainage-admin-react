@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, FileText, MapPin, Users, Bell, LogOut } from 'lucide-react';
+import { Home, FileText, MapPin, Users, Bell, LogOut, PlusCircle } from 'lucide-react';
 
 export default function Sidebar() {
   const location = useLocation();
@@ -9,6 +9,7 @@ export default function Sidebar() {
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Home },
     { name: 'Reports', path: '/reports', icon: FileText },
+    { name: 'Add Report', path: '/add-report', icon: PlusCircle },
     { name: 'Map', path: '/map', icon: MapPin },
     { name: 'Residents', path: '/residents', icon: Users },
     { name: 'Notification', path: '/notifications', icon: Bell },

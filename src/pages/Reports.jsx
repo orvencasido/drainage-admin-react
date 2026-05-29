@@ -184,7 +184,7 @@ export default function Reports() {
               {/* Right Column image mockup */}
               <div className="report-image-container">
                 <img 
-                  src={cloggedDrainImg} 
+                  src={editingReport.imageUrl || cloggedDrainImg} 
                   alt="Clogged drainage documentation" 
                   className="report-image" 
                 />
