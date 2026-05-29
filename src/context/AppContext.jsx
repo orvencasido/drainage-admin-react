@@ -178,53 +178,6 @@ export function AppProvider({ children }) {
     setSession(null);
   };
 
-  const uploadReportPhoto = async (file) => {
-    if (!file) return '';
-    if (!supabase) throw new Error('Supabase is not configured.');
-
-    const extension = file.name.split('.').pop();
-    const filePath = `${Date.now()}-${crypto.randomUUID()}.${extension}`;
-    const { error: uploadError } = await supabase.storage
-      .from(reportPhotosBucket)
-      .upload(filePath, file, { upsert: false });
-
-    if (uploadError) throw uploadError;
-
-    const { data } = supabase.storage.from(reportPhotosBucket).getPublicUrl(filePath);
-    return data.publicUrl;
-  };
-
-  const addReport = async (report, photoFile) => {
-    if (!supabase) throw new Error('Supabase is not configured.');
-
-    const imageUrl = await uploadReportPhoto(photoFile);
-    const payload = {
-      issue: report.issue,
-      location: report.location,
-      status: 'In Progress',
-      date_submitted: new Date().toISOString(),
-      submitted_by: report.submittedBy || 'Admin',
-      contact_no: report.contactNo || null,
-      description: report.description,
-      remarks: '',
-      map_coords: report.mapCoords || null,
-      lat_lng_label: report.latLngLabel || report.location,
-      image_url: imageUrl || null
-    };
-
-    const { data, error: insertError } = await supabase
-      .from(REPORTS_TABLE)
-      .insert(payload)
-      .select()
-      .single();
-
-    if (insertError) throw insertError;
-
-    const savedReport = mapReportFromDb(data);
-    setReports((prev) => [savedReport, ...prev]);
-    return savedReport;
-  };
-
   const updateReportDetails = async (id, newStatus, newRemarks) => {
     if (!supabase) throw new Error('Supabase is not configured.');
 
@@ -317,7 +270,6 @@ export function AppProvider({ children }) {
     refreshData,
     signIn,
     signOut,
-    addReport,
     updateReportDetails,
     addResident,
     deleteResident,

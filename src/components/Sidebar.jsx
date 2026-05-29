@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, FileText, Users, Bell, LogOut, PlusCircle } from 'lucide-react';
+import { Home, FileText, Users, Bell, LogOut } from 'lucide-react';
 import { useApp } from '../context/useApp';
 
 export default function Sidebar() {
@@ -10,7 +10,6 @@ export default function Sidebar() {
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Home },
     { name: 'Reports', path: '/reports', icon: FileText },
-    { name: 'Add Report', path: '/add-report', icon: PlusCircle },
     { name: 'Residents', path: '/residents', icon: Users },
     { name: 'Notification', path: '/notifications', icon: Bell },
   ];
