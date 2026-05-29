@@ -9,13 +9,13 @@ export default function Header() {
     switch (path) {
       case '/dashboard':
         return 'Dashboard';
-      case '/dashboard/reports':
+      case '/reports':
         return 'All Reports';
-      case '/dashboard/map':
+      case '/map':
         return 'Reports Map View';
-      case '/dashboard/residents':
+      case '/residents':
         return 'Residents Management';
-      case '/dashboard/notifications':
+      case '/notifications':
         return 'Send Notification';
       default:
         return 'Drainage Monitoring System';

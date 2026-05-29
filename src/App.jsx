@@ -18,13 +18,13 @@ export default function App() {
           {/* Landing / Root is Login Page */}
           <Route path="/" element={<Login />} />
           
-          {/* Main Dashboard Layout wrapper under /dashboard */}
-          <Route path="/dashboard" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="map" element={<MapView />} />
-            <Route path="residents" element={<Residents />} />
-            <Route path="notifications" element={<Notifications />} />
+          {/* Main Dashboard Layout wrapper */}
+          <Route element={<Layout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/map" element={<MapView />} />
+            <Route path="/residents" element={<Residents />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
           
           {/* Catch-all redirect to Login */}

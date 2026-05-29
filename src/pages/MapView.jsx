@@ -112,7 +112,7 @@ export default function MapView() {
 
                   <button 
                     className="map-popup-link"
-                    onClick={() => navigate(`/dashboard/reports?search=${report.id}`)}
+                    onClick={() => navigate(`/reports?search=${report.id}`)}
                   >
                     View details
                   </button>

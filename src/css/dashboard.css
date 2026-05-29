@@ -58,13 +58,33 @@
 }
 
 /* Custom coloring for stat cards */
-.stat-card.total .stat-value { color: #111827; }
-.stat-card.inprogress .stat-title { color: var(--status-inprogress); }
-.stat-card.inprogress .stat-value { color: var(--status-inprogress); }
-.stat-card.resolved .stat-title { color: var(--status-resolved); }
-.stat-card.resolved .stat-value { color: var(--status-resolved); }
-.stat-card.rejected .stat-title { color: var(--status-rejected); }
-.stat-card.rejected .stat-value { color: var(--status-rejected); }
+.stat-card.total .stat-value {
+  color: #111827;
+}
+
+.stat-card.inprogress .stat-title {
+  color: var(--status-inprogress);
+}
+
+.stat-card.inprogress .stat-value {
+  color: var(--status-inprogress);
+}
+
+.stat-card.resolved .stat-title {
+  color: var(--status-resolved);
+}
+
+.stat-card.resolved .stat-value {
+  color: var(--status-resolved);
+}
+
+.stat-card.rejected .stat-title {
+  color: var(--status-rejected);
+}
+
+.stat-card.rejected .stat-value {
+  color: var(--status-rejected);
+}
 
 .section-header {
   display: flex;
@@ -129,9 +149,17 @@
   border-radius: 2px;
 }
 
-.legend-color.inprogress { background-color: #f59e0b; }
-.legend-color.resolved { background-color: #10b981; }
-.legend-color.rejected { background-color: #ef4444; }
+.legend-color.inprogress {
+  background-color: #f59e0b;
+}
+
+.legend-color.resolved {
+  background-color: #10b981;
+}
+
+.legend-color.rejected {
+  background-color: #ef4444;
+}
 
 .legend-value {
   font-weight: 500;
